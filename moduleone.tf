@@ -28,14 +28,11 @@ resource "aws_instance" "nginx" {
   instance_type          = "t2.micro"
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.for_terraform.id]
-  user_data              = <<EOF
-#!/bin/bash
-yum install httpd -y
-myip=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
-echo "<h2>WEbServer with IP: $myip</h2>Build by terraform"
-systemctl start httpd
-systemctl enable httpd
-EOF
+  tags={
+  name="teraform_server"}
+  user_data = file("user_data.sh")
+
+
 }
 
 resource "aws_security_group" "for_terraform" {
